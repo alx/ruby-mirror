@@ -1,18 +1,8 @@
 class RubyMirror
 
-  @@device = "/dev/hidraw0"
   @@in = Hash.new
   @@out = Hash.new
   @@unknown = Array.new
-
-  def self.device=(dev)
-    raise "#{dev} doesn't exist or isn't readable." unless FileTest.exists?(dev) && FileTest.readable?(dev)
-    @@device = dev
-  end
-
-  def self.device
-    return @@device
-  end
 
   def self.in(id, &block)
     @@in[id] = Array.new unless @@in[id]
@@ -29,13 +19,13 @@ class RubyMirror
   end
 
   def initialize(filename, options)
-    RubyMirror.device = options[:device] if options[:device]
     @verbose = options[:verbose]
+    find_device
     load filename
   end
 
   def run
-    f = File.open(self.class.device, 'r')
+    f = File.open(@device, 'r')
 
     while true
       a,b = f.read(2).split('').collect {|i| i[0]}                              # read 2 bytes, transform to array and cast to int
@@ -57,6 +47,23 @@ class RubyMirror
       end
     end
   end
+
+  private
+
+  def find_device
+    Dir.glob("/dev/hidraw*").each do |device|
+      f = File.open(device, "r")
+      a = [0,0,0].pack("iss")
+      f.ioctl(-2146940925, a)
+      a = a.unpack("iss")
+      if a[1] == 7592 and a[2] = 4865
+        @device = device
+        return
+      end
+    end
+    raise "Mirror does not seem to be plugged in."
+  end
+
 end
 
 def device(dev)
