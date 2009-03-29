@@ -35,40 +35,14 @@ This is rather a rough scretch than a working interface.
 
 To use this, you have to
 
-=== Identify the device
+=== Access to the device 
 
-After connecting your mir:ror you can find the device via dmesg:
+In order to be able to detect and access the mir:ror ruby-mirror needs
+read access to all /dev/hidraw devices:
 
-  $ dmesg
-  ...
-  hiddev96hidraw3: USB HID v1.00 Device [Violet Mirror] on usb-0000:00:0b.1-1.3
+  $ sudo chmod o+r /dev/hidraw*
 
-this points to
-
-  $ ls /dev/hidraw*
-
-  crw-rw---- 1 root root 252, 0 2009-02-15 22:02 /dev/hidraw0
-  crw-rw---- 1 root root 252, 1 2009-02-15 22:02 /dev/hidraw1
-  crw-rw---- 1 root root 252, 2 2009-02-15 22:02 /dev/hidraw2
-  crw-rw---- 1 root root 252, 3 2009-03-25 22:14 /dev/hidraw3 <----
-
-=== "Adjust" the permission
-
-To access the interface you have to make it world-readable:
-
-  $ sudo chmod o+r /dev/hidraw3
-  $ ls /dev/hidraw*
-
-  crw-rw---- 1 root root 252, 0 2009-02-15 22:02 /dev/hidraw0
-  crw-rw---- 1 root root 252, 1 2009-02-15 22:02 /dev/hidraw1
-  crw-rw---- 1 root root 252, 2 2009-02-15 22:02 /dev/hidraw2
-  crw-rw-r-- 1 root root 252, 3 2009-03-25 22:14 /dev/hidraw3 <----
-
-You'll have to repeat this each time you plug the mir:ror in.
-
-=== Adjust the path
-
-Change <tt>/dev/hidraw3</tt> to your device in <tt>bin/ruby-mirror.rb</tt>
+You'll have to repeat this each time you plug in a hid device. 
 
 === Run the sample
 
