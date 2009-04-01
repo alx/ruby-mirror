@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+if Process.uid != 0
+  exit 1
+end
+
+Dir.glob("/dev/hidraw*").each do |device|
+  f = File.open(device, "r")
+  a = [0,0,0].pack("iss")
+  f.ioctl(-2146940925, a)
+  a = a.unpack("iss")
+  f.close
+  if a[1] == 7592 and a[2] = 4865
+    File.chmod(0644, device)
+    puts device
+    exit 0 
+  end
+end
+exit 2

@@ -37,12 +37,17 @@ To use this, you have to
 
 === Access to the device 
 
-In order to be able to detect and access the mir:ror ruby-mirror needs
-read access to all /dev/hidraw devices:
+In order to be able to access the mir:ror ruby-mirror needs
+read access to the device file. ruby-mirror will automatically
+try to detect the device and set the necessary permissions. In
+order to do so it needs root privileges. ruby-mirror will try
+to obtain those privileges by first trying sudo and if that
+fails su.
 
-  $ sudo chmod o+r /dev/hidraw*
-
-You'll have to repeat this each time you plug in a hid device. 
+The script running with root privileges (detect-mirror) is
+completely seperated from all other ruby-mirror code. After
+successful detection all ruby-mirror code runs with normal
+user privileges.
 
 === Run the sample
 

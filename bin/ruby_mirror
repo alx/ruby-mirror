@@ -12,8 +12,24 @@ unless (ARGV.size == 1 && File.exist?(ARGV[0])) or
   usage and exit 1
 end
 
+command = File.dirname(File.expand_path($0)) + "/detect_mirror"
+device = `test -x /usr/bin/sudo && sudo #{command} || su - -c #{command}`
+
+case $?
+  when 0:
+    puts "Found mir:ror at #{device}"
+  when 256:
+    puts "Detection failed. You need root privileges to detect the mir:ror device"
+    exit 1
+  when 512:
+    puts "Detection failed. Your mir:ror is probably not plugged in."
+    exit 1
+end
+
+device.chomp!
+
 begin
-  r = RubyMirror.new(ARGV[ARGV.size - 1], {:verbose => (ARGV[0] == "-v")})
+  r = RubyMirror.new(device, ARGV[ARGV.size - 1], {:verbose => (ARGV[0] == "-v")})
   r.run
 rescue Errno::EAGAIN
   puts "test"

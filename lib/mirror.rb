@@ -18,9 +18,9 @@ class RubyMirror
     @@unknown << block
   end
 
-  def initialize(filename, options)
+  def initialize(device, filename, options)
     @verbose = options[:verbose]
-    find_device
+    @device = device
     load filename
   end
 
@@ -46,22 +46,6 @@ class RubyMirror
         puts "#{direction}\t#{payload} (rfid#{payload}@things.violet.net)" if @verbose
       end
     end
-  end
-
-  private
-
-  def find_device
-    Dir.glob("/dev/hidraw*").each do |device|
-      f = File.open(device, "r")
-      a = [0,0,0].pack("iss")
-      f.ioctl(-2146940925, a)
-      a = a.unpack("iss")
-      if a[1] == 7592 and a[2] = 4865
-        @device = device
-        return
-      end
-    end
-    raise "Mirror does not seem to be plugged in."
   end
 
 end
