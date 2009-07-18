@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'lib/mirror'
+$LOAD_PATH << './lib'
+require 'mirror.rb'
 
 def usage
   puts "ruby-mirror [-v] <filename>"
@@ -16,12 +17,12 @@ command = File.dirname(File.expand_path($0)) + "/detect_mirror"
 device = `test -x /usr/bin/sudo && sudo #{command} || su - -c #{command}`
 
 case $?
-  when 0:
+  when 0 then
     puts "Found mir:ror at #{device}"
-  when 256:
+  when 256 then
     puts "Detection failed. You need root privileges to detect the mir:ror device"
     exit 1
-  when 512:
+  when 512 then
     puts "Detection failed. Your mir:ror is probably not plugged in."
     exit 1
 end
